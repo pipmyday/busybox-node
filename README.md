@@ -6,7 +6,7 @@ A minimum-footprint node.js 5.7 base image built with busybox.
 
 ## Available tags
 
-* `5.7`, `latest` [5.7/Dockerfile](https://github.com/pipmyday/node-static/blob/master/Dockerfile)
+* `5.7`, `latest` [5.7/Dockerfile](https://github.com/pipmyday/node-static/blob/v5.7/Dockerfile)
 
 ## Build
 
