@@ -1,15 +1,30 @@
 #!/bin/bash
+set -e
 
-mkdir -p ./bin
+NODE_VERSION=$(node --version|cut -c 2-)
+SHARED_LIBS_DEST_DIR="./shared-libs"
 
-cp /lib/x86_64-linux-gnu/libdl.so.2 \
-    /lib/x86_64-linux-gnu/librt.so.1 \
-    /usr/lib/x86_64-linux-gnu/libstdc++.so.6 \
-    /lib/x86_64-linux-gnu/libm.so.6 \
-    /lib/x86_64-linux-gnu/libgcc_s.so.1 \
-    /lib/x86_64-linux-gnu/libpthread.so.0 \
-    /lib/x86_64-linux-gnu/libc.so.6 \
-    /lib64/ld-linux-x86-64.so.2 \
-    /usr/bin/node ./bin/
+NODE_BIN=$(whereis node|awk '{print $2}')
 
-docker build -t pipmyday/node-static:latest .
+if [ $NODE_BIN = "" ]; then echo "node binary not found!" && exit 1; fi
+
+echo "Assembling dynamic libraries needed for node v$NODE_VERSION in $SHARED_LIBS_DEST_DIR"
+
+if [ -d $SHARED_LIBS_DEST_DIR ]; then rm -r $SHARED_LIBS_DEST_DIR; fi
+
+files=$NODE_BIN" "$(ldd $NODE_BIN|grep /|sed -r 's/[^\/]*(\/.+ ).*/\1/g')
+
+for x in $files
+do
+
+    destdir="$SHARED_LIBS_DEST_DIR$(dirname $x)/"
+    mkdir -p $destdir
+    cp -Lr $x $destdir
+
+    echo "copy $x to $destdir"
+
+done
+
+echo "copied "$(find $SHARED_LIBS_DEST_DIR -type f|wc -l)" files."
+
+docker build -t "pipmyday/busybox-node:$NODE_VERSION" .
