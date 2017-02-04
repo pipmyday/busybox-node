@@ -7,6 +7,7 @@ A minimum-footprint node.js Docker base image built with busybox.
 ## Available tags
 
 * `7.5.0`, `latest` [7.5.0/Dockerfile](https://github.com/pipmyday/busybox-node/blob/v7.5.0/Dockerfile)
+* `6.9.5`
 * `5.7.0` [5.7.0/Dockerfile](https://github.com/pipmyday/busybox-node/blob/v5.7.0/Dockerfile)
 
 ## Build
